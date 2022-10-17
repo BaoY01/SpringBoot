@@ -2,13 +2,17 @@ package com.runsystem.student.service.impl;
 
 import com.runsystem.student.api.input.UserInput;
 import com.runsystem.student.api.input.UserRegisterInput;
-import com.runsystem.student.converter.UserConverter;
 import com.runsystem.student.dto.UserDTO;
+import com.runsystem.student.entity.RoleEntity;
 import com.runsystem.student.entity.UserEntity;
+import com.runsystem.student.mapper.IUserMapper;
+import com.runsystem.student.repository.RoleRepository;
 import com.runsystem.student.repository.UserRepository;
 import com.runsystem.student.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UserService implements IUserService {
@@ -16,7 +20,10 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
 
     @Autowired
-    UserConverter userConverter;
+    private RoleRepository roleRepository;
+
+    @Autowired
+    IUserMapper userMapper;
 
     // Check user dang ky da ton tai chua
     private Boolean isUserByUserName(String name)
@@ -35,10 +42,8 @@ public class UserService implements IUserService {
             return null;
         } else {
             // Lưu User vào DB và trả user mới thêm về cho client
-            UserEntity entity = new UserEntity();
-            entity.setUserName(user.getUserName());
-            entity.setPassword(user.getPassWord());
-            return userConverter.toDTO(userRepository.save(entity));
+            UserEntity entity = userMapper.toUserEntity(user);
+            return userMapper.toUserDto(userRepository.save(entity));
         }
 
     }
@@ -49,8 +54,32 @@ public class UserService implements IUserService {
         UserEntity userEntity = userRepository.findByUserNameAndPassword(user.getUserName(), user.getPassWord());
 
         if (userEntity != null) {
-            return userConverter.toDTO(userEntity);
+            return userMapper.toUserDto(userEntity);
         }
         return null;
     }
+
+
+//    @Override
+//    public UserDTO loadUserByUserName(String userName) {
+//        UserEntity userEntity = userRepository.findByUserName(userName);
+//
+//        if (userEntity != null) {
+//            return userMapper.toUserDto(userEntity);
+//        }
+//        return null;
+//    }
+
+
+    ///
+    @Override
+    public UserDTO findByUserName(String userName) {
+        UserEntity userEntity = userRepository.findByUserName(userName);
+
+        if (userEntity != null) {
+            return userMapper.toUserDto(userEntity);
+        }
+        return null;
+    }
+
 }

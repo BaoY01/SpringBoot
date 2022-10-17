@@ -6,9 +6,9 @@ import com.runsystem.student.api.output.DataResponse;
 import com.runsystem.student.constant.ConstantSystem;
 import com.runsystem.student.dto.UserDTO;
 import com.runsystem.student.service.IUserService;
+import com.runsystem.student.service.impl.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -19,10 +19,13 @@ public class UserAPI {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    JwtService jwtService;
+
     ConstantSystem constantSystem;
 
     @SuppressWarnings("static-access")
-    @PostMapping(value = "/login")
+    @PostMapping(value = "login")
     public DataResponse<UserDTO> login(HttpServletRequest request, @Valid @RequestBody UserInput user) {
         String result = "";
         UserDTO dto = null;
@@ -30,7 +33,7 @@ public class UserAPI {
             //BẬT đăng nhập vào hệ thống
             dto = userService.checkLogin(user);
             if (dto != null) {
-                result = constantSystem.TOKEN_SUCCESS;
+                result = constantSystem.TOKEN_SUCCESS + jwtService.generateTokenLogin(user.getUserName());
             } else {
                 result = constantSystem.WRONG_USERNAME_PASSWORD;
             }
@@ -42,11 +45,11 @@ public class UserAPI {
 
 
     @SuppressWarnings("static-access")
-    @PostMapping(value = "/register")
+    @PostMapping(value = "register")
     public DataResponse<UserDTO> register(HttpServletRequest request, @Valid @RequestBody UserRegisterInput user) {
 
         // Check password confirm and password
-        if (!user.getPassWord().equals(user.getPassWordConfirm())) {
+        if (!user.getPassword().equals(user.getPassWordConfirm())) {
             return new DataResponse<UserDTO>(constantSystem.PASSWORD_PASSWORKCONFIRM, null,
                     LocalDateTime.now().toString());
         }

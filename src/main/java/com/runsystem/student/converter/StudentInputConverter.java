@@ -15,7 +15,6 @@ public class StudentInputConverter {
         studentEntity.setStudentId(input.getStudentId());
         studentEntity.setStudentCode(input.getStudentCode());
         studentEntity.setStudentName(input.getStudentName());
-
         return studentEntity;
     }
 
@@ -24,7 +23,7 @@ public class StudentInputConverter {
 
         studentInfoEntity.setAddress(input.getAddress());
         studentInfoEntity.setAverageScore(input.getAverageScore());
-        studentInfoEntity.setDateOfBirth(convertDate.toLong(input.getBirthDay()));
+        studentInfoEntity.setDateOfBirth(convertDate.toLong(input.getDateOfBirth()));
 
         return studentInfoEntity;
     }

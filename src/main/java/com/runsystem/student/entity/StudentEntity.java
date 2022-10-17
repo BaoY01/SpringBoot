@@ -1,7 +1,11 @@
 package com.runsystem.student.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "student")
 public class StudentEntity {
@@ -19,36 +23,8 @@ public class StudentEntity {
     @OneToOne(mappedBy = "student")
     private StudentInfoEntity studentInfo;
 
-    public Long getStudentId() {
-        return studentId;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classId")
+    private ClassEntity aClass;
 
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
-    }
-
-
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
-    public String getStudentCode() {
-        return studentCode;
-    }
-
-    public void setStudentCode(String studentCode) {
-        this.studentCode = studentCode;
-    }
-
-    public StudentInfoEntity getStudentInfo() {
-        return studentInfo;
-    }
-
-    public void setStudentInfo(StudentInfoEntity studentInfo) {
-        this.studentInfo = studentInfo;
-    }
 }

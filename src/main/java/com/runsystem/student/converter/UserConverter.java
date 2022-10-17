@@ -17,6 +17,8 @@ public class UserConverter {
         UserDTO dto = new UserDTO();
         dto.setUserName(entity.getUserName());
         dto.setPassword(entity.getPassword());
+        dto.setRoleId(entity.getARole().getRoloId());
+        dto.setRoleCode((entity.getARole().getRoleCode()));
         return dto;
     }
 
