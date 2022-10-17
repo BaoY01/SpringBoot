@@ -1,12 +1,11 @@
 package com.runsystem.student.service.impl;
 
 import com.runsystem.student.api.input.StudentInput;
-import com.runsystem.student.converter.StudentInfoConverter;
-import com.runsystem.student.converter.StudentInputConverter;
 import com.runsystem.student.dto.StudentInfoDTO;
-import com.runsystem.student.entity.ListStudentEntity;
-import com.runsystem.student.entity.StudentEntity;
-import com.runsystem.student.entity.StudentInfoEntity;
+import com.runsystem.student.entity.*;
+import com.runsystem.student.mapper.IStudentInfoMapper;
+import com.runsystem.student.mapper.IStudentMapper;
+import com.runsystem.student.repository.ClassRepository;
 import com.runsystem.student.repository.StudentInfoRepository;
 import com.runsystem.student.repository.StudentRepository;
 import com.runsystem.student.service.IStudentInfoService;
@@ -25,17 +24,30 @@ public class StudentInfoService implements IStudentInfoService {
     StudentRepository studentRepository;
 
     @Autowired
-    private StudentInfoConverter studentInfoConverter;
+    ClassRepository classRepository;
 
-    @Autowired
-    private StudentInputConverter studentInputConvert;
+//    @Autowired
+//    private StudentInfoConverter studentInfoConverter;
+
+//    @Autowired
+//    private StudentInputConverter studentInputConvert;
 
     ConvertDate convertDate;
 
+    @Autowired
+    IStudentMapper studentMapper;
+
+    @Autowired
+    IStudentInfoMapper studentInfoMapper;
+
+
     @Override
     public StudentInfoDTO saveStudentInfo(StudentInput studentInfoInput) {
+//      Luu classId
+        ClassEntity classEntity = classRepository.findOneByClassId(studentInfoInput.getClassId());
 //      Chuyển đổi dữ liệu từ StudentInput thành StudentEntity
-        StudentEntity studentEntity = studentInputConvert.toStudentEntity(studentInfoInput);
+        StudentEntity studentEntity = studentMapper.toStudentEntity(studentInfoInput);
+        studentEntity.setAClass(classEntity);
         studentEntity = studentRepository.save(studentEntity);
         StudentInfoEntity studentInfoEntity = null;
 
@@ -43,7 +55,8 @@ public class StudentInfoService implements IStudentInfoService {
         if (studentInfoInput.getStudentId() == null) {
 
             // Chuyển data từ StuedentInput thành StudentInfoEntity
-            studentInfoEntity = studentInputConvert.toStudentInfoEntity(studentInfoInput);
+            studentInfoEntity = studentMapper.toStudentInfoEntity(studentInfoInput);
+
             studentInfoEntity.setStudent(studentEntity);
         } else {
 
@@ -51,7 +64,7 @@ public class StudentInfoService implements IStudentInfoService {
             List<StudentInfoEntity> infoEntities = studentInfoRepository.findByStudent(studentEntity);
 
             // Chuyển đổi dữ liệu studentInput thành StudentInfoEntity
-            studentInfoEntity = studentInputConvert.toStudentInfoEntity(studentInfoInput);
+            studentInfoEntity = studentMapper.toStudentInfoEntity(studentInfoInput);
             studentInfoEntity.setInfoId(infoEntities.get(0).getInfoId());
         }
 
@@ -60,8 +73,9 @@ public class StudentInfoService implements IStudentInfoService {
         StudentInfoEntity resultStudentInfoEntity = studentInfoRepository.save(studentInfoEntity);
         studentEntity = studentRepository.getOne(studentEntity.getStudentId());
         resultStudentInfoEntity.setStudent(studentEntity);
-        return studentInfoConverter.toDTO(resultStudentInfoEntity);
+        return studentInfoMapper.toDTO(resultStudentInfoEntity);
     }
+
 
     @Override
     public List<StudentInfoDTO> searchStudentByInfo(StudentInput student) {
@@ -73,34 +87,41 @@ public class StudentInfoService implements IStudentInfoService {
 
         // StringUtils.isNotBlank(student.getStudentName()) || StringUtils.isNotBlank(student.getStudentCode())
 
-        if(student.getBirthDay() == null){
+        if(student.getDateOfBirth() == null){
             studentInfoEntitiesByName = studentInfoRepository.searchListStudent(student.getStudentCode(), student.getStudentName(), null);
         }else{
 //    	    Query data by studentName, studentCode, birthDay.
-            studentInfoEntitiesByName = studentInfoRepository.searchListStudent(student.getStudentCode(), student.getStudentName(), convertDate.toLong(student.getBirthDay()));
+            studentInfoEntitiesByName = studentInfoRepository.searchListStudent(student.getStudentCode(), student.getStudentName(), convertDate.toLong(student.getDateOfBirth()));
         }
 
 //      Chuyển đổi dữ liệu danh sách sang dto
         studentInfoEntitiesByName.forEach((n) -> {
-            StudentInfoDTO itemDto = studentInfoConverter.toDTO(n);
+            StudentInfoDTO itemDto = studentInfoMapper.toDTO(n);
             lisDtos.add(itemDto);
         });
         return lisDtos;
     }
 
     @Override
-    public void deleteByStudentID(Long id) {
+    public StudentInfoDTO deleteByStudentId(Long id) {
         studentRepository.deleteById(id);
         studentInfoRepository.deleteById(id);
+        return null;
     }
+
+//    @Override
+//    public void deleteByStudentID(Long id) {
+//        studentRepository.deleteById(id);
+//        studentInfoRepository.deleteById(id);
+//    }
 
     @Override
     public List<StudentInfoDTO> getListStudent(){
         List<StudentInfoDTO> lisDtos = new ArrayList<StudentInfoDTO>();
-        List<StudentInfoEntity> entities = studentInfoRepository.findAll();;
+        List<StudentInfoEntity> entities = studentInfoRepository.findAll();
 //        Chuyển đổi dữ liệu danh sách sang dto
         entities.forEach((n) -> {
-            StudentInfoDTO itemDto = studentInfoConverter.toDTO(n);
+            StudentInfoDTO itemDto = studentInfoMapper.toDTO(n);
             lisDtos.add(itemDto);
         });
         return lisDtos;

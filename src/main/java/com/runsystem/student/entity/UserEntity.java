@@ -1,8 +1,11 @@
 package com.runsystem.student.entity;
 
-
+import lombok.Getter;
+import lombok.Setter;
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class UserEntity {
@@ -14,26 +17,10 @@ public class UserEntity {
     @Column(length = 20, nullable = false)
     private String userName;
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 225, nullable = false)
     private String password;
 
-    public int getUser_id() {
-        return userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roleId")
+    private RoleEntity aRole;
 }

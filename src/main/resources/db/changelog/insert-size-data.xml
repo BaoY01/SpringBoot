@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="1" author="baoy">
+<!--        <sqlFile encoding="UTF-8" path="../scripts/data-config/0001-insert-data.sql" relativeToChangelogFile="true"/>-->
+        <comment>Inserting size</comment>
+        <insert tableName="sizes">
+            <column name="code" value="SMALL"/>
+            <column name="sort_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="sizes">
+            <column name="code" value="MEDIUM"/>
+            <column name="sort_order" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

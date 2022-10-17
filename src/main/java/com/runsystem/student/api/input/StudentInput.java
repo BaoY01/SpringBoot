@@ -1,12 +1,16 @@
 package com.runsystem.student.api.input;
 
 import com.runsystem.student.utils.ConvertDate;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Getter
+@Setter
 public class StudentInput {
     ConvertDate convertDate;
 
@@ -22,8 +26,11 @@ public class StudentInput {
     private String studentName;
 
     @NotNull
+    private Long classId;
+
+    @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDay;
+    private Date dateOfBirth;
 
     @NotNull
     @Size(max = 225, message = "Student address maxlength 225 characters")
@@ -31,61 +38,6 @@ public class StudentInput {
 
     @NotNull
     @Max(10)
-    private Double averageScore;
+    private double averageScore;
 
-    public ConvertDate getConvertDate() {
-        return convertDate;
-    }
-
-    public void setConvertDate(ConvertDate convertDate) {
-        this.convertDate = convertDate;
-    }
-
-    public String getStudentCode() {
-        return studentCode;
-    }
-
-    public void setStudentCode(String studentCode) {
-        this.studentCode = studentCode;
-    }
-
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
-    public Date getBirthDay() {
-        return birthDay;
-    }
-
-    public void setBirthDay(Date birthDay) {
-        this.birthDay = birthDay;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Double getAverageScore() {
-        return averageScore;
-    }
-
-    public void setAverageScore(Double averageScore) {
-        this.averageScore = averageScore;
-    }
-
-    public Long getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
-    }
 }
